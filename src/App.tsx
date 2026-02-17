@@ -1,21 +1,13 @@
 import { useState } from 'react';
 import './App.css';
 import { ShoppingCart, Heart, ArrowRight, X } from 'lucide-react';
+import { products } from './data/products';
 
 function App() {
   const [isHovered, setIsHovered] = useState(false);
   const [isButtonHovered, setIsButtonHovered] = useState(false);
   const [showProducts, setShowProducts] = useState(false);
   const [cart, setCart] = useState<number[]>([]);
-  
-  const products = [
-    { id: 1, name: 'Classic Leather Oxford', price: 120, image: '/shoe1.png' },
-    { id: 2, name: 'Premium Chelsea Boot', price: 145, image: '/shoe2.png' },
-    { id: 3, name: 'Casual Loafer', price: 110, image: '/shoe3.png' },
-    { id: 4, name: 'Elegant Derby Shoe', price: 135, image: '/shoe4.png' },
-    { id: 5, name: 'Modern Sneaker', price: 100, image: '/shoe5.png' },
-    { id: 6, name: 'Luxury Dress Shoe', price: 160, image: '/shoe6.png' },
-  ];
 
   const addToCart = (productId: number) => {
     setCart([...cart, productId]);
