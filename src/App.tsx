@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import './App.css';
-import { ShoppingCart, Heart, ArrowRight, X } from 'lucide-react';
+import { Heart, ArrowRight } from 'lucide-react';
 import { products } from './data/products';
+import { AnimatedCart } from './components/AnimatedCart';
+import { ProductsModal } from './components/ProductsModal';
 
 function App() {
   const [isHovered, setIsHovered] = useState(false);
@@ -49,14 +51,10 @@ function App() {
             <button className="text-white/70 hover:text-orange-400 transition-colors">
               <Heart className="w-6 h-6" />
             </button>
-            <button 
+            <AnimatedCart 
+              itemCount={cart.length} 
               onClick={() => setShowProducts(true)}
-              className="text-white/70 hover:text-orange-400 transition-colors relative">
-              <ShoppingCart className="w-6 h-6" />
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 rounded-full text-xs flex items-center justify-center text-white font-medium">
-                {cart.length}
-              </span>
-            </button>
+            />
           </div>
         </nav>
       </header>
@@ -218,62 +216,13 @@ function App() {
       <div className="absolute bottom-20 right-8 h-px w-20 bg-gradient-to-l from-orange-500/50 to-transparent" />
 
       {/* Products Modal */}
-      {showProducts && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 overflow-auto">
-          <div className="bg-gradient-to-br from-gray-900/95 to-gray-800/95 rounded-3xl max-w-6xl w-full border border-orange-500/30 p-8 max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-4xl font-black text-white">
-                <span className="text-orange-500">Premium</span> Collection
-              </h2>
-              <button
-                onClick={() => setShowProducts(false)}
-                className="text-white/70 hover:text-orange-400 transition-colors"
-              >
-                <X className="w-8 h-8" />
-              </button>
-            </div>
-
-            {/* Products Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {products.map((product) => (
-                <div 
-                  key={product.id}
-                  className="group relative bg-gradient-to-br from-gray-900/50 to-gray-800/50 rounded-2xl overflow-hidden border border-orange-500/30 hover:border-orange-500/60 transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/20"
-                >
-                  {/* Product Image Container */}
-                  <div className="relative h-64 bg-gradient-to-br from-gray-950 to-gray-900 overflow-hidden flex items-center justify-center">
-                    <img 
-                      src={product.image} 
-                      alt={product.name}
-                      className="w-48 h-48 object-contain group-hover:scale-110 transition-transform duration-300"
-                    />
-                    {/* Decorative corner */}
-                    <div className="absolute top-3 right-3 w-12 h-12 border border-orange-500/30 rounded-full" />
-                  </div>
-
-                  {/* Product Info */}
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-white mb-2">{product.name}</h3>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="text-3xl font-black text-orange-500">
-                        ${product.price}
-                      </div>
-                      <button
-                        onClick={() => addToCart(product.id)}
-                        className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-full transition-all duration-300 hover:scale-105 active:scale-95"
-                      >
-                        Add to Cart
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      <ProductsModal
+        isOpen={showProducts}
+        products={products}
+        onClose={() => setShowProducts(false)}
+        onAddToCart={addToCart}
+        cartCount={cart.length}
+      />
       </div>
   );
 }
