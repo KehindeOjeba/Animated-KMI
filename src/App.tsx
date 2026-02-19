@@ -3,7 +3,7 @@ import './App.css';
 import { Heart, ArrowRight } from 'lucide-react';
 import { products } from './data/products';
 import { AnimatedCart } from './components/AnimatedCart';
-import { ProductsModal } from './components/ProductsModal';
+import { ProductsPage } from './components/ProductsPage';
 
 function App() {
   const [isHovered, setIsHovered] = useState(false);
@@ -45,7 +45,7 @@ function App() {
               alt="Kensmadeit" 
               className="w-10 h-10 object-contain"
             />
-            <span className="text-white font-bold text-xl tracking-tight">Kensmadeit</span>
+            <span className="text-white font-bold text-xl tracking-tight">KensMadeIt</span>
           </div>
           <div className="flex items-center gap-6">
             <button className="text-white/70 hover:text-orange-400 transition-colors">
@@ -63,7 +63,7 @@ function App() {
       <div className="relative z-10 flex items-center justify-center">
         
         {/* Logo Circle - Always visible, hover target */}
-        <div 
+       <div 
           className={`
             relative w-[200px] h-[200px] flex items-center justify-center cursor-pointer
             transition-all duration-500 ease-out
@@ -100,6 +100,7 @@ function App() {
             <span className="text-orange-500/60 text-sm tracking-wider uppercase">Hover to explore</span>
           </div>
         </div>
+
 
         {/* Card - Appears on hover */}
         <div 
@@ -215,14 +216,14 @@ function App() {
       <div className="absolute bottom-20 right-8 w-px h-20 bg-gradient-to-t from-orange-500/50 to-transparent" />
       <div className="absolute bottom-20 right-8 h-px w-20 bg-gradient-to-l from-orange-500/50 to-transparent" />
 
-      {/* Products Modal */}
-      <ProductsModal
-        isOpen={showProducts}
-        products={products}
-        onClose={() => setShowProducts(false)}
-        onAddToCart={addToCart}
-        cartCount={cart.length}
-      />
+      {/* Products Page */}
+      {showProducts && (
+        <ProductsPage
+          onClose={() => setShowProducts(false)}
+          onAddToCart={addToCart}
+          cartCount={cart.length}
+        />
+      )}
       </div>
   );
 }

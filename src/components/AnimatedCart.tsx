@@ -11,36 +11,41 @@ export function AnimatedCart({ itemCount, onClick }: AnimatedCartProps) {
   const wheelLeftRef = useRef<HTMLDivElement>(null);
   const wheelRightRef = useRef<HTMLDivElement>(null);
 
-useEffect(() => {
-  const wheelTweens = [
-    wheelLeftRef.current,
-    wheelRightRef.current,
-  ]
-    .filter(Boolean)
-    .map((wheel) =>
-      gsap.to(wheel!, {
-        rotation: 360,
-        duration: 1.5,
-        repeat: -1,
-        ease: 'none',
-      })
-    );
+  useEffect(() => {
+    const tweens: ReturnType<typeof gsap.to>[] = [];
 
-  const cartTween = cartRef.current
-    ? gsap.to(cartRef.current, {
+    // Continuous rotation animation for wheels
+    const wheels = [wheelLeftRef.current, wheelRightRef.current];
+    wheels.forEach((wheel) => {
+      if (wheel) {
+        const tween = gsap.to(wheel, {
+          rotation: 360,
+          duration: 1.5,
+          repeat: -1,
+          ease: 'none',
+        });
+        tweens.push(tween);
+      }
+    });
+
+    // Subtle bounce animation for cart body
+    if (cartRef.current) {
+      const tween = gsap.to(cartRef.current, {
         y: -4,
         duration: 1,
         repeat: -1,
         yoyo: true,
         ease: 'sine.inOut',
-      })
-    : null;
+      });
+      tweens.push(tween);
+    }
 
-  return () => {
-    wheelTweens.forEach((tween) => tween.kill());
-    cartTween?.kill();
-  };
-}, []);
+    return () => {
+      tweens.forEach((tween) => {
+        tween.kill();
+      });
+    };
+  }, []);
 
   return (
     <div

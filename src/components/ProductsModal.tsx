@@ -17,7 +17,7 @@ export function ProductsModal({
   products,
   onClose,
   onAddToCart,
-  cartCount,
+  //cartCount,
 }: ProductsModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -30,8 +30,9 @@ export function ProductsModal({
     const tl = gsap.timeline();
 
     // Fade in backdrop
-    tl.to(
+    tl.fromTo(
       modalRef.current,
+      { opacity: 0 },
       {
         opacity: 1,
         duration: 0.3,
@@ -42,8 +43,9 @@ export function ProductsModal({
 
     // Scale and fade in modal content
     if (contentRef.current) {
-      tl.to(
+      tl.fromTo(
         contentRef.current,
+        { opacity: 0, scale: 0.95 },
         {
           opacity: 1,
           scale: 1,
@@ -55,9 +57,14 @@ export function ProductsModal({
     }
 
     // Stagger product cards in
-    if (productCardsRef.current.length > 0) {
-      tl.to(
-        productCardsRef.current,
+    const cards = productCardsRef.current.filter(
+      (card) => card !== null
+    ) as HTMLDivElement[];
+    
+    if (cards.length > 0) {
+      tl.fromTo(
+        cards,
+        { opacity: 0, y: 30 },
         {
           opacity: 1,
           y: 0,
@@ -82,18 +89,19 @@ export function ProductsModal({
   return (
     <div
       ref={modalRef}
-      className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 overflow-auto opacity-0"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-auto"
       onClick={onClose}
       style={{
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        opacity: 0,
       }}
     >
       <div
         ref={contentRef}
         className="bg-gradient-to-br from-gray-900/95 to-gray-800/95 rounded-3xl max-w-6xl w-full border border-orange-500/30 p-8 max-h-[90vh] overflow-y-auto"
         style={{
-          scale: 0.95,
           opacity: 0,
+          scale: 0.95,
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -124,7 +132,7 @@ export function ProductsModal({
               className="group relative bg-gradient-to-br from-gray-900/50 to-gray-800/50 rounded-2xl overflow-hidden border border-orange-500/30 hover:border-orange-500/60 transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/20 cursor-pointer"
               style={{
                 opacity: 0,
-                y: 30,
+                transform: 'translateY(30px)',
               }}
               onMouseEnter={(e) => {
                 const target = e.currentTarget;
