@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import './App.css';
 import { Heart, ArrowRight } from 'lucide-react';
-import { products } from './data/products';
+//import { products } from './data/products';
 import { AnimatedCart } from './components/AnimatedCart';
 import { ProductsPage } from './components/ProductsPage';
+import Lottie from 'lottie-react';
+import cartAnimation from '../public/cart-animation.json'
 
 function App() {
   const [isHovered, setIsHovered] = useState(false);
@@ -55,6 +57,10 @@ function App() {
               itemCount={cart.length} 
               onClick={() => setShowProducts(true)}
             />
+             <Lottie
+            animationData={cartAnimation}
+            className="w-[50px] cursor-pointer"
+          />
           </div>
         </nav>
       </header>

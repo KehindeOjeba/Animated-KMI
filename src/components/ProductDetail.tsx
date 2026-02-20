@@ -184,7 +184,7 @@ export function ProductDetail({
 
             {/* Additional Info */}
             <p className="text-white/40 text-xs mt-6 text-center">
-              ✓ Free Shipping on Orders Over $100 | ✓ 30-Day Returns | ✓ 2-Year Warranty
+              Production takes 10 working days. Delivery is expected within 5-7 business days after production. Free returns within 30 days of delivery.
             </p>
           </div>
         </div>

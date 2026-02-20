@@ -155,7 +155,7 @@ export function ProductsPage({
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="w-48 h-48 object-contain transition-transform duration-300 group-hover:scale-110"
+                    className="w-47 h-45 object-contain transition-transform duration-300 group-hover:scale-110"
                     style={{
                       filter: 'drop-shadow(0 10px 20px rgba(139, 69, 19, 0.3))',
                     }}
