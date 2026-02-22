@@ -6,7 +6,7 @@ import type { Product } from '../data/products';
 interface ProductDetailProps {
   product: Product;
   onClose: () => void;
-  onAddToCart: (productId: number) => void;
+  onAddToCart: (product: Product) => void;
 }
 
 export function ProductDetail({
@@ -170,7 +170,7 @@ export function ProductDetail({
             {/* Action Buttons */}
             <div className="flex gap-4">
               <button
-                onClick={() => onAddToCart(product.id)}
+                onClick={() => onAddToCart(product)}
                 className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-full transition-all duration-300 hover:scale-105 active:scale-95 group"
               >
                 <ShoppingCart className="w-5 h-5" />

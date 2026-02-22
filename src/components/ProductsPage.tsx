@@ -2,19 +2,19 @@ import { useState, useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 import gsap from 'gsap';
 import { products } from '../data/products';
+import type { Product } from '../data/products';
 import { ShoeCarousel } from './ShoeCarousel';
 import { ProductDetail } from './ProductDetail';
 
 interface ProductsPageProps {
   onClose: () => void;
-  onAddToCart: (productId: number) => void;
+  onAddToCart: (product: Product) => void;
   cartCount: number;
 }
 
 export function ProductsPage({
   onClose,
   onAddToCart,
-  //cartCount,
 }: ProductsPageProps) {
   const [selectedProduct, setSelectedProduct] = useState<number | null>(null);
   const pageRef = useRef<HTMLDivElement>(null);
@@ -188,7 +188,7 @@ export function ProductsPage({
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        onAddToCart(product.id);
+                        onAddToCart(product);
                       }}
                       className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-full transition-all duration-300 hover:scale-105 active:scale-95 group/btn relative overflow-hidden"
                     >

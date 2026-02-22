@@ -1,20 +1,56 @@
 import { useState } from 'react';
 import './App.css';
 import { Heart, ArrowRight } from 'lucide-react';
-//import { products } from './data/products';
+import { products } from './data/products';
 import { AnimatedCart } from './components/AnimatedCart';
 import { ProductsPage } from './components/ProductsPage';
-import Lottie from 'lottie-react';
-import cartAnimation from '../public/cart-animation.json'
+import { CartPage, type CartItem } from './components/CartPage';
 
 function App() {
   const [isHovered, setIsHovered] = useState(false);
   const [isButtonHovered, setIsButtonHovered] = useState(false);
   const [showProducts, setShowProducts] = useState(false);
-  const [cart, setCart] = useState<number[]>([]);
+  const [showCart, setShowCart] = useState(false);
+  const [cart, setCart] = useState<CartItem[]>([]);
 
-  const addToCart = (productId: number) => {
-    setCart([...cart, productId]);
+  const addToCart = (product: typeof products[0]) => {
+    setCart((prevCart) => {
+      const existingItem = prevCart.find((item) => item.id === product.id);
+
+      if (existingItem) {
+        return prevCart.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
+
+      return [...prevCart, { ...product, quantity: 1 }];
+    });
+  };
+
+  const removeFromCart = (productId: number) => {
+    setCart((prevCart) =>
+      prevCart.filter((item) => item.id !== productId)
+    );
+  };
+
+  const updateQuantity = (productId: number, quantity: number) => {
+    if (quantity <= 0) {
+      removeFromCart(productId);
+      return;
+    }
+
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item.id === productId ? { ...item, quantity } : item
+      )
+    );
+  };
+
+  const handleStartShopping = () => {
+    setShowProducts(true);
+    setShowCart(false);
   };
 
   return (
@@ -55,12 +91,12 @@ function App() {
             </button>
             <AnimatedCart 
               itemCount={cart.length} 
-              onClick={() => setShowProducts(true)}
+              onClick={() => setShowCart(true)}
             />
-             <Lottie
+             {/* <Lottie
             animationData={cartAnimation}
             className="w-[50px] cursor-pointer"
-          />
+          /> */}
           </div>
         </nav>
       </header>
@@ -228,6 +264,17 @@ function App() {
           onClose={() => setShowProducts(false)}
           onAddToCart={addToCart}
           cartCount={cart.length}
+        />
+      )}
+
+      {/* Cart Page */}
+      {showCart && (
+        <CartPage
+          items={cart}
+          onClose={() => setShowCart(false)}
+          onRemoveItem={removeFromCart}
+          onUpdateQuantity={updateQuantity}
+          onStartShopping={handleStartShopping}
         />
       )}
       </div>
