@@ -3,11 +3,10 @@
  * Main checkout interface that redirects to Stripe
  */
 
-'use client';
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '@/lib/cart';
+import { useCart } from '../../lib/cart';
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
