@@ -153,12 +153,12 @@ export default function CheckoutSuccess() {
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-4">
-          <Link
+          {/* <Link
             href="/"
             className="flex-1 bg-blue-600 text-white text-center px-6 py-3 rounded-lg hover:bg-blue-700 transition"
           >
             Continue Shopping
-          </Link>
+          </Link> */}
           <a
             href="mailto:support@kensmadeit.com"
             className="flex-1 border border-gray-300 text-gray-900 text-center px-6 py-3 rounded-lg hover:bg-gray-50 transition"

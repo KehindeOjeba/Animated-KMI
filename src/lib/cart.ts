@@ -8,7 +8,7 @@
  * - Analytics-ready event tracking
  * - Handles edge cases (out of stock, price changes)
  */
-
+import React from 'react';
 import { z } from 'zod';
 
 // Cart item schema
@@ -350,4 +350,3 @@ export function useCart() {
  *    - Cart is just convenience for UX
  */
 
-import React from 'react';
