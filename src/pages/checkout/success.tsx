@@ -1,6 +1,6 @@
 /**
  * Checkout Success Page
- * After successful Stripe payment
+ * After successful Paystack payment
  */
 
 'use client';
@@ -11,25 +11,25 @@ import { useNavigate } from 'react-router-dom';
 export default function CheckoutSuccess() {
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(window.location.search);
-  const sessionId = queryParams.get('session_id');
+  const reference = queryParams.get('reference');
   const [orderDetails, setOrderDetails] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!sessionId) {
-      setError('No session ID found');
+    if (!reference) {
+      setError('No payment reference found');
       setLoading(false);
       return;
     }
 
-    // Fetch order details from session
+    // Verify transaction and fetch order details
     const fetchOrderDetails = async () => {
       try {
-        const response = await fetch(`/api/checkout/success?session_id=${sessionId}`);
+        const response = await fetch(`/api/checkout?reference=${reference}`);
         if (!response.ok) throw new Error('Failed to fetch order details');
         const data = await response.json();
-        setOrderDetails(data);
+        setOrderDetails(data.data);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
       } finally {
@@ -38,7 +38,7 @@ export default function CheckoutSuccess() {
     };
 
     fetchOrderDetails();
-  }, [sessionId]);
+  }, [reference]);
 
   if (loading) {
     return (
@@ -86,56 +86,44 @@ export default function CheckoutSuccess() {
         {/* Order Details */}
         {orderDetails && (
           <div className="bg-white rounded-lg shadow-md p-8 mb-8">
-            {/* Order Number */}
+            {/* Payment Reference */}
             <div className="mb-6 pb-6 border-b">
-              <p className="text-gray-600 text-sm">Order Number</p>
-              <p className="text-2xl font-bold text-gray-900">{orderDetails.orderNumber}</p>
+              <p className="text-gray-600 text-sm">Payment Reference</p>
+              <p className="text-2xl font-bold text-gray-900 break-all">{orderDetails.reference}</p>
             </div>
 
-            {/* Customer Info */}
+            {/* Payment Info */}
             <div className="grid md:grid-cols-2 gap-8 mb-6 pb-6 border-b">
               <div>
-                <p className="text-gray-600 text-sm mb-1">Order Placed</p>
-                <p className="text-gray-900 font-medium">
-                  {new Date(orderDetails.createdAt).toLocaleDateString()}
-                </p>
+                <p className="text-gray-600 text-sm mb-1">Amount Paid</p>
+                <p className="text-gray-900 font-medium">₦{(orderDetails.amount / 100).toFixed(2)}</p>
               </div>
               <div>
                 <p className="text-gray-600 text-sm mb-1">Email</p>
-                <p className="text-gray-900 font-medium">{orderDetails.customerEmail}</p>
+                <p className="text-gray-900 font-medium">{orderDetails.customer?.email}</p>
               </div>
             </div>
 
-            {/* Items */}
+            {/* Payment Status */}
             <div className="mb-6 pb-6 border-b">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Order Items</h2>
-              <div className="space-y-2">
-                {orderDetails.items?.map((item: any, index: number) => (
-                  <div key={index} className="flex justify-between text-gray-800">
-                    <span>
-                      {item.productName} × {item.quantity}
-                    </span>
-                    <span>${((item.productPrice * item.quantity) / 100).toFixed(2)}</span>
-                  </div>
-                ))}
+              <p className="text-gray-600 text-sm mb-1">Payment Status</p>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span className="text-gray-900 font-medium capitalize">{orderDetails.status}</span>
               </div>
             </div>
 
-            {/* Total */}
-            <div className="mb-6">
-              <div className="flex justify-between text-xl font-bold text-gray-900">
-                <span>Total</span>
-                <span>${(orderDetails.totalAmount / 100).toFixed(2)}</span>
-              </div>
-            </div>
-
-            {/* Shipping Address */}
+            {/* Transaction Info */}
             <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-gray-600 text-sm mb-2">Shipping To</p>
-              <p className="text-gray-900 font-medium">{orderDetails.customerName}</p>
-              <p className="text-gray-700">{orderDetails.shippingAddress}</p>
-              <p className="text-gray-700">
-                {orderDetails.shippingCity}, {orderDetails.shippingState} {orderDetails.shippingZip}
+              <p className="text-gray-600 text-sm mb-2">Transaction Date</p>
+              <p className="text-gray-900 font-medium">
+                {new Date(orderDetails.paid_at).toLocaleDateString('en-NG', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
               </p>
             </div>
           </div>
@@ -148,17 +136,18 @@ export default function CheckoutSuccess() {
             <li>✓ Check your email for order confirmation</li>
             <li>✓ Your order will be processed within 24 hours</li>
             <li>✓ You'll receive a tracking number once shipped</li>
+            <li>✓ Your payment has been successfully received</li>
           </ul>
         </div>
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-4">
-          {/* <Link
-            href="/"
+          <button
+            onClick={() => navigate('/')}
             className="flex-1 bg-blue-600 text-white text-center px-6 py-3 rounded-lg hover:bg-blue-700 transition"
           >
             Continue Shopping
-          </Link> */}
+          </button>
           <a
             href="mailto:support@kensmadeit.com"
             className="flex-1 border border-gray-300 text-gray-900 text-center px-6 py-3 rounded-lg hover:bg-gray-50 transition"

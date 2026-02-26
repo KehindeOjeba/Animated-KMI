@@ -1,6 +1,6 @@
 /**
  * Checkout Cancel Page
- * When customer cancels Stripe payment
+ * When customer cancels Paystack payment
  */
 
 'use client';
