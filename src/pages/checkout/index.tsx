@@ -1,8 +1,7 @@
 /**
  * Checkout Page
- * Main checkout interface that redirects to Stripe
+ * Main checkout interface that redirects to Paystack
  */
-
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -13,10 +12,17 @@ export default function CheckoutPage() {
   const cart = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState('');
+  const [fullName, setFullName] = useState('');
 
   const handleCheckout = async () => {
     if (cart.items.length === 0) {
       setError('Your cart is empty');
+      return;
+    }
+
+    if (!email || !fullName) {
+      setError('Please enter your email and full name');
       return;
     }
 
@@ -33,6 +39,8 @@ export default function CheckoutPage() {
             productId: item.id,
             quantity: item.quantity,
           })),
+          email,
+          customerName: fullName,
         }),
       });
 
@@ -41,11 +49,11 @@ export default function CheckoutPage() {
         throw new Error(errorData.error || 'Checkout failed');
       }
 
-      const { url } = await response.json();
+      const { authorizationUrl } = await response.json();
 
-      // Redirect to Stripe
-      if (url) {
-        window.location.href = url;
+      // Redirect to Paystack
+      if (authorizationUrl) {
+        window.location.href = authorizationUrl;
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Checkout failed');
@@ -96,7 +104,7 @@ export default function CheckoutPage() {
                         <h3 className="font-bold text-gray-900">{item.name}</h3>
                         <p className="text-sm text-gray-600 mb-2">Quantity: {item.quantity}</p>
                         <p className="text-lg font-semibold text-gray-900">
-                          ${((item.price * item.quantity) / 100).toFixed(2)}
+                          ₦{((item.price * item.quantity) / 100).toFixed(2)}
                         </p>
                       </div>
                     </div>
@@ -114,7 +122,7 @@ export default function CheckoutPage() {
               <div className="space-y-3 mb-6 pb-6 border-b">
                 <div className="flex justify-between text-gray-600">
                   <span>Subtotal ({summary.itemCount} items)</span>
-                  <span>${(summary.subtotal / 100).toFixed(2)}</span>
+                  <span>₦{(summary.subtotal / 100).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-gray-600">
                   <span>Shipping</span>
@@ -122,13 +130,40 @@ export default function CheckoutPage() {
                 </div>
                 <div className="flex justify-between text-gray-600">
                   <span>Tax (10%)</span>
-                  <span>${(summary.tax / 100).toFixed(2)}</span>
+                  <span>₦{(summary.tax / 100).toFixed(2)}</span>
                 </div>
               </div>
 
               <div className="flex justify-between text-2xl font-bold text-gray-900 mb-6">
                 <span>Total</span>
-                <span>${(summary.total / 100).toFixed(2)}</span>
+                <span>₦{(summary.total / 100).toFixed(2)}</span>
+              </div>
+
+              <div className="space-y-4 mb-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="your.email@example.com"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="Your Full Name"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
               </div>
 
               {error && (
@@ -139,21 +174,21 @@ export default function CheckoutPage() {
 
               <button
                 onClick={handleCheckout}
-                disabled={loading || cart.items.length === 0}
+                disabled={loading || cart.items.length === 0 || !email || !fullName}
                 className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
               >
                 {loading ? 'Processing...' : 'Proceed to Payment'}
               </button>
 
               <p className="text-xs text-gray-500 text-center mt-4">
-                You'll be redirected to secure Stripe checkout
+                You'll be redirected to your secure Paystack checkout
               </p>
 
               <button
                 onClick={() => navigate('/')}
                 className="block w-full text-center text-blue-600 hover:underline mt-4 bg-transparent border-none cursor-pointer"
               >
-                ← Continue Shopping
+                ← Continue Shopping now
               </button>
             </div>
           </div>
@@ -162,3 +197,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+
