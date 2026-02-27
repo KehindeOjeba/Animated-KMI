@@ -205,7 +205,7 @@ function App() {
                 onMouseLeave={() => setIsButtonHovered(false)}
                 onClick={() => setShowProducts(true)}
               >
-                Shop Now
+                Shop your favs
                 <ArrowRight 
                   className={`
                     w-4 h-4 transition-transform duration-300
